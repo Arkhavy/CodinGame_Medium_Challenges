@@ -37,8 +37,37 @@ struct	s_square
 	int	y_middle; //middle between ytl and ybl
 };
 
-void	define_square(t_square *square, int xtl, int ytl, int xbr, int ybr)
+void	define_square(t_square *square, int xtl, int ytl, int xbr, int ybr, int len)
 {
+	dprintf(2, "xtl %d ytl %d xbr %d ybr %d\n", xtl, ytl, xbr, ybr);
+	if (len == 1)
+	{
+		if (xtl == xbr)
+		{
+			if (ytl > square->y_top_left)
+				square->y_middle = ytl / 2;
+			else
+				square->y_middle = square->y_top_left / 2;
+		}
+		else if (ytl == ybr)
+		{
+			if (xtl > square->x_top_left)
+				square->x_middle = xtl / 2;
+			else
+				square->x_middle = square->x_top_left / 2;
+		}
+	}
+	else
+	{
+		// if (xtl > 0 && xtl != xbr)
+		// 	square->x_middle = xbr - (xtl / 2);
+		// else
+			square->x_middle = xbr / 2 + xtl;
+		// if (ytl > 0 && ytl != ybr)
+		// 	square->y_middle = ybr - (ytl / 2);
+		// else
+			square->y_middle = ybr / 2 + ytl;
+	}
 	square->x_top_left = xtl;
 	square->y_top_left = ytl;
 
@@ -51,14 +80,7 @@ void	define_square(t_square *square, int xtl, int ytl, int xbr, int ybr)
 	square->x_bot_left = xtl;
 	square->y_bot_left = ybr;
 
-	if (xtl > 0 && xtl != xbr)
-		square->x_middle = xbr - (xtl / 2);
-	else
-		square->x_middle = xbr / 2;
-	if (ytl > 0 && ytl != ybr)
-		square->y_middle = ybr - (ytl / 2);
-	else
-		square->y_middle = ybr / 2;
+	dprintf(2, "x_mid %d y_mid %d\n", square->x_middle, square->y_middle);
 }
 
 int main(void)
@@ -71,32 +93,31 @@ int main(void)
 	scanf("%d%d", &data.width, &data.height);
 	scanf("%d", &data.turns);
 	scanf("%d%d", &data.current_x, &data.current_y);
-	define_square(&square, 0, 0, data.width, data.height);
-	data.last_x = data.current_x;
-	data.last_y = data.current_y;
+	define_square(&square, 0, 0, data.width, data.height, 0);
+	data.last_x = -1;
+	data.last_y = -1;
 	while (42)
 	{
 		scanf("%s", data.bomb_dir);
-		if (!strcmp(data.bomb_dir, "U\n"))
-			define_square(&square, data.current_x, 0, data.current_x, data.current_y);
-		else if (!strcmp(data.bomb_dir, "UR\n"))
-			define_square(&square);
-		else if (!strcmp(data.bomb_dir, "R\n"))
-			define_square(&square);
-		else if (!strcmp(data.bomb_dir, "DR\n"))
-			define_square(&square);
-		else if (!strcmp(data.bomb_dir, "D\n"))
-			define_square(&square);
-		else if (!strcmp(data.bomb_dir, "DL\n"))
-			define_square(&square);
-		else if (!strcmp(data.bomb_dir, "L\n"))
-			define_square(&square);
-		else if (!strcmp(data.bomb_dir, "UL\n"))
-			define_square(&square);
+		dprintf(2, "\n%s\n\n", data.bomb_dir);
+		if (!strncmp(data.bomb_dir, "U", 4))
+			define_square(&square, data.current_x, square.y_top_left, data.current_x, data.current_y, strlen(data.bomb_dir));
+		else if (!strncmp(data.bomb_dir, "UR", 4))
+			define_square(&square, data.current_x, square.y_top_left, square.x_bot_right, data.current_y, strlen(data.bomb_dir));
+		else if (!strncmp(data.bomb_dir, "R", 4))
+			define_square(&square, data.current_x, data.current_y, square.x_bot_right, data.current_y, strlen(data.bomb_dir));
+		else if (!strncmp(data.bomb_dir, "DR", 4))
+			define_square(&square, data.current_x, data.current_y, square.x_bot_right, square.y_bot_right, strlen(data.bomb_dir));
+		else if (!strncmp(data.bomb_dir, "D", 4))
+			define_square(&square, data.current_x, data.current_y, data.current_x, square.y_bot_right, strlen(data.bomb_dir));
+		else if (!strncmp(data.bomb_dir, "DL", 4))
+			define_square(&square, square.x_top_left, data.current_y, data.current_x, square.y_bot_right, strlen(data.bomb_dir));
+		else if (!strncmp(data.bomb_dir, "L", 4))
+			define_square(&square, square.x_top_left, data.current_y, data.current_x, data.current_y, strlen(data.bomb_dir));
+		else if (!strncmp(data.bomb_dir, "UL", 4))
+			define_square(&square, square.x_top_left, square.y_top_left, data.current_x, data.current_y, strlen(data.bomb_dir));
 		dest_x = square.x_middle;
 		dest_y = square.y_middle;
-		data.last_x = data.current_x;
-		data.last_y = data.current_y;
 		data.current_x = dest_x;
 		data.current_y = dest_y;
 		printf("%d %d\n", dest_x, dest_y);
