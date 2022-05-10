@@ -39,35 +39,18 @@ struct	s_square
 
 void	define_square(t_square *square, int xtl, int ytl, int xbr, int ybr, int len)
 {
-	dprintf(2, "xtl %d ytl %d xbr %d ybr %d\n", xtl, ytl, xbr, ybr);
-	if (len == 1)
+	dprintf(2, "new xtl %d ytl %d xbr %d ybr %d\n", xtl, ytl, xbr, ybr);
+	dprintf(2, "old xtl %d ytl %d xbr %d ybr %d\n", square->x_top_left, square->y_top_left, square->x_bot_right, square->y_bot_right);
+	if (xtl == xbr)
 	{
-		if (xtl == xbr)
-		{
-			if (ytl > square->y_top_left)
-				square->y_middle = ytl / 2;
-			else
-				square->y_middle = square->y_top_left / 2;
-		}
-		else if (ytl == ybr)
-		{
-			if (xtl > square->x_top_left)
-				square->x_middle = xtl / 2;
-			else
-				square->x_middle = square->x_top_left / 2;
-		}
+
 	}
-	else
+	else if (ytl == ybr)
 	{
-		// if (xtl > 0 && xtl != xbr)
-		// 	square->x_middle = xbr - (xtl / 2);
-		// else
-			square->x_middle = xbr / 2 + xtl;
-		// if (ytl > 0 && ytl != ybr)
-		// 	square->y_middle = ybr - (ytl / 2);
-		// else
-			square->y_middle = ybr / 2 + ytl;
+		
 	}
+	square->x_middle = xbr / 2 + xtl / 2;
+	square->y_middle = ybr / 2 + ytl / 2;
 	square->x_top_left = xtl;
 	square->y_top_left = ytl;
 
